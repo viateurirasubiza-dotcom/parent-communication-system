@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parents Management</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+padding:20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.header h1{
+color:#0f172a;
+}
+
+.back-btn{
+background:#3b82f6;
+color:white;
+padding:10px 15px;
+text-decoration:none;
+border-radius:8px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
+}
+
+input{
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+width:100%;
+}
+
+.btn{
+background:#22c55e;
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+table th,
+table td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+table th{
+background:#e2e8f0;
+}
+
+.delete-btn{
+background:#ef4444;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>Parents Management</h1>
+
+<a href="dashboard.html" class="back-btn">
+<i class="fas fa-arrow-left"></i> Dashboard
+</a>
+</div>
+
+<div class="card">
+
+<h2>Add Parent</h2>
+<br>
+
+<div class="form-grid">
+
+<input type="text" id="parentId" placeholder="Parent ID">
+
+<input type="text" id="parentName" placeholder="Parent Name">
+
+<input type="text" id="phone" placeholder="Phone Number">
+
+<input type="email" id="email" placeholder="Email Address">
+
+<input type="text" id="studentName" placeholder="Student Name">
+
+<button class="btn" onclick="addParent()">
+Add Parent
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Parents List</h2>
+<br>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Phone</th>
+<th>Email</th>
+<th>Student</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="parentTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let parents =
+JSON.parse(localStorage.getItem("parents")) || [];
+
+function saveParents(){
+localStorage.setItem(
+"parents",
+JSON.stringify(parents)
+);
+}
+
+function addParent(){
+
+const id =
+document.getElementById("parentId").value;
+
+const name =
+document.getElementById("parentName").value;
+
+const phone =
+document.getElementById("phone").value;
+
+const email =
+document.getElementById("email").value;
+
+const student =
+document.getElementById("studentName").value;
+
+if(!id || !name || !phone){
+alert("Please fill all required fields");
+return;
+}
+
+parents.push({
+id,
+name,
+phone,
+email,
+student
+});
+
+saveParents();
+renderParents();
+
+document.getElementById("parentId").value="";
+document.getElementById("parentName").value="";
+document.getElementById("phone").value="";
+document.getElementById("email").value="";
+document.getElementById("studentName").value="";
+
+alert("Parent Added Successfully");
+
+}
+
+function renderParents(){
+
+const table =
+document.getElementById("parentTable");
+
+table.innerHTML="";
+
+parents.forEach((parent,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${parent.id}</td>
+<td>${parent.name}</td>
+<td>${parent.phone}</td>
+<td>${parent.email}</td>
+<td>${parent.student}</td>
+<td>
+<button
+class="delete-btn"
+onclick="deleteParent(${index})">
+Delete
+</button>
+</td>
+</tr>
+`;
+
+});
+
+}
+
+function deleteParent(index){
+
+if(confirm("Delete this parent?")){
+
+parents.splice(index,1);
+
+saveParents();
+
+renderParents();
+
+}
+
+}
+
+renderParents();
+
+</script>
+
+</body>
+</html>
