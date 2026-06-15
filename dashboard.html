@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Parent Communication System</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+display:flex;
+background:#f1f5f9;
+}
+
+.sidebar{
+width:260px;
+height:100vh;
+background:#0f172a;
+color:white;
+position:fixed;
+left:0;
+top:0;
+overflow-y:auto;
+}
+
+.logo{
+padding:20px;
+font-size:22px;
+font-weight:bold;
+text-align:center;
+background:#020617;
+}
+
+.menu{
+padding-top:10px;
+}
+
+.menu a{
+display:block;
+padding:15px 20px;
+color:white;
+text-decoration:none;
+transition:.3s;
+}
+
+.menu a:hover{
+background:#1e293b;
+padding-left:28px;
+}
+
+.main{
+margin-left:260px;
+width:calc(100% - 260px);
+}
+
+.topbar{
+background:white;
+padding:15px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.topbar h2{
+color:#0f172a;
+}
+
+.profile{
+font-weight:bold;
+color:#334155;
+}
+
+.content{
+padding:25px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.card h3{
+color:#64748b;
+margin-bottom:10px;
+}
+
+.card h1{
+color:#0f172a;
+}
+
+.section{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.section h2{
+margin-bottom:15px;
+color:#0f172a;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+table th,
+table td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+table th{
+background:#e2e8f0;
+}
+
+.logout{
+background:#ef4444;
+margin:20px;
+padding:12px;
+text-align:center;
+border-radius:10px;
+cursor:pointer;
+}
+
+.logout:hover{
+background:#dc2626;
+}
+
+@media(max-width:768px){
+
+.sidebar{
+width:100%;
+height:auto;
+position:relative;
+}
+
+.main{
+margin-left:0;
+width:100%;
+}
+
+body{
+flex-direction:column;
+}
+
+.cards{
+grid-template-columns:1fr;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+🎓 School ERP
+</div>
+
+<div class="menu">
+<a href="#"><i class="fas fa-home"></i> Dashboard</a>
+<a href="students.html"><i class="fas fa-user-graduate"></i> Students</a>
+<a href="parents.html"><i class="fas fa-users"></i> Parents</a>
+<a href="attendance.html"><i class="fas fa-calendar-check"></i> Attendance</a>
+<a href="results.html"><i class="fas fa-chart-line"></i> Results</a>
+<a href="finance.html"><i class="fas fa-money-bill"></i> Finance</a>
+<a href="messages.html"><i class="fas fa-envelope"></i> Messages</a>
+<a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+<a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+</div>
+
+<div class="logout" onclick="logout()">
+Logout
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<h2>Dashboard</h2>
+<div class="profile">
+Admin User
+</div>
+</div>
+
+<div class="content">
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Students</h3>
+<h1 id="studentsCount">250</h1>
+</div>
+
+<div class="card">
+<h3>Total Parents</h3>
+<h1 id="parentsCount">220</h1>
+</div>
+
+<div class="card">
+<h3>Attendance Rate</h3>
+<h1>96%</h1>
+</div>
+
+<div class="card">
+<h3>Fees Collection</h3>
+<h1>12M Frw</h1>
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Recent Activities</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Activity</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>15/06/2026</td>
+<td>Attendance Updated</td>
+<td>Completed</td>
+</tr>
+
+<tr>
+<td>14/06/2026</td>
+<td>Exam Results Uploaded</td>
+<td>Completed</td>
+</tr>
+
+<tr>
+<td>13/06/2026</td>
+<td>Parent Notification Sent</td>
+<td>Completed</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="section">
+
+<h2>Quick Actions</h2>
+
+<button onclick="location.href='students.html'">
+Manage Students
+</button>
+
+<button onclick="location.href='attendance.html'">
+Attendance
+</button>
+
+<button onclick="location.href='finance.html'">
+Finance
+</button>
+
+<button onclick="location.href='messages.html'">
+Send Message
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+function logout(){
+localStorage.clear();
+window.location.href="login.html";
+}
+</script>
+
+</body>
+</html>
