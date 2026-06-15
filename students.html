@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Students Management</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+padding:20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.header h1{
+color:#0f172a;
+}
+
+.btn{
+background:#22c55e;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.form-card,
+.table-card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+table th,
+table td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+table th{
+background:#e2e8f0;
+}
+
+.delete-btn{
+background:#ef4444;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+.back-btn{
+background:#3b82f6;
+color:white;
+padding:10px 15px;
+text-decoration:none;
+border-radius:8px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>Students Management</h1>
+<a href="dashboard.html" class="back-btn">
+<i class="fas fa-arrow-left"></i> Dashboard
+</a>
+</div>
+
+<div class="form-card">
+<h2>Add Student</h2>
+<br>
+
+<div class="form-grid">
+
+<input type="text" id="studentId" placeholder="Student ID">
+
+<input type="text" id="studentName" placeholder="Student Name">
+
+<input type="text" id="studentClass" placeholder="Class">
+
+<input type="text" id="parentName" placeholder="Parent Name">
+
+<input type="text" id="parentPhone" placeholder="Parent Phone">
+
+<button class="btn" onclick="addStudent()">
+Add Student
+</button>
+
+</div>
+</div>
+
+<div class="table-card">
+
+<h2>Students List</h2>
+<br>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Class</th>
+<th>Parent</th>
+<th>Phone</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="studentTable">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let students =
+JSON.parse(localStorage.getItem("students")) || [];
+
+function saveStudents(){
+localStorage.setItem(
+"students",
+JSON.stringify(students)
+);
+}
+
+function addStudent(){
+
+const id =
+document.getElementById("studentId").value;
+
+const name =
+document.getElementById("studentName").value;
+
+const studentClass =
+document.getElementById("studentClass").value;
+
+const parent =
+document.getElementById("parentName").value;
+
+const phone =
+document.getElementById("parentPhone").value;
+
+if(!id || !name || !studentClass){
+alert("Fill all required fields");
+return;
+}
+
+students.push({
+id,
+name,
+studentClass,
+parent,
+phone
+});
+
+saveStudents();
+renderStudents();
+
+document.getElementById("studentId").value="";
+document.getElementById("studentName").value="";
+document.getElementById("studentClass").value="";
+document.getElementById("parentName").value="";
+document.getElementById("parentPhone").value="";
+
+alert("Student Added Successfully");
+
+}
+
+function renderStudents(){
+
+const table =
+document.getElementById("studentTable");
+
+table.innerHTML="";
+
+students.forEach((student,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${student.id}</td>
+<td>${student.name}</td>
+<td>${student.studentClass}</td>
+<td>${student.parent}</td>
+<td>${student.phone}</td>
+<td>
+<button class="delete-btn"
+onclick="deleteStudent(${index})">
+Delete
+</button>
+</td>
+</tr>
+`;
+
+});
+
+}
+
+function deleteStudent(index){
+
+if(confirm("Delete this student?")){
+
+students.splice(index,1);
+
+saveStudents();
+
+renderStudents();
+
+}
+
+}
+
+renderStudents();
+
+</script>
+
+</body>
+</html>
