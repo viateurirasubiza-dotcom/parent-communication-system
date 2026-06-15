@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance System</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+padding:20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.header h1{
+color:#0f172a;
+}
+
+.back-btn{
+background:#3b82f6;
+color:white;
+padding:10px 15px;
+text-decoration:none;
+border-radius:8px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
+}
+
+input,select{
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+width:100%;
+}
+
+.btn{
+background:#22c55e;
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+table th,
+table td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+table th{
+background:#e2e8f0;
+}
+
+.present{
+color:green;
+font-weight:bold;
+}
+
+.absent{
+color:red;
+font-weight:bold;
+}
+
+.delete-btn{
+background:#ef4444;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>Attendance System</h1>
+
+<a href="dashboard.html" class="back-btn">
+<i class="fas fa-arrow-left"></i> Dashboard
+</a>
+</div>
+
+<div class="card">
+
+<h2>Mark Attendance</h2>
+<br>
+
+<div class="form-grid">
+
+<input type="text" id="studentId" placeholder="Student ID">
+
+<input type="text" id="studentName" placeholder="Student Name">
+
+<select id="status">
+<option value="">Select Status</option>
+<option value="Present">Present</option>
+<option value="Absent">Absent</option>
+</select>
+
+<input type="date" id="date">
+
+<button class="btn" onclick="markAttendance()">
+Save Attendance
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Attendance Records</h2>
+<br>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="attendanceTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let attendance =
+JSON.parse(localStorage.getItem("attendance")) || [];
+
+function saveAttendance(){
+localStorage.setItem(
+"attendance",
+JSON.stringify(attendance)
+);
+}
+
+function markAttendance(){
+
+const id =
+document.getElementById("studentId").value;
+
+const name =
+document.getElementById("studentName").value;
+
+const status =
+document.getElementById("status").value;
+
+const date =
+document.getElementById("date").value;
+
+if(!id || !name || !status || !date){
+alert("Fill all fields");
+return;
+}
+
+attendance.push({
+id,
+name,
+status,
+date
+});
+
+saveAttendance();
+renderAttendance();
+
+document.getElementById("studentId").value="";
+document.getElementById("studentName").value="";
+document.getElementById("status").value="";
+document.getElementById("date").value="";
+
+alert("Attendance Saved");
+
+}
+
+function renderAttendance(){
+
+const table =
+document.getElementById("attendanceTable");
+
+table.innerHTML="";
+
+attendance.forEach((a,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${a.id}</td>
+<td>${a.name}</td>
+<td>${a.date}</td>
+<td class="${a.status==='Present'?'present':'absent'}">
+${a.status}
+</td>
+<td>
+<button class="delete-btn"
+onclick="deleteAttendance(${index})">
+Delete
+</button>
+</td>
+</tr>
+`;
+
+});
+
+}
+
+function deleteAttendance(index){
+
+if(confirm("Delete this record?")){
+
+attendance.splice(index,1);
+
+saveAttendance();
+
+renderAttendance();
+
+}
+
+}
+
+renderAttendance();
+
+</script>
+
+</body>
+</html>
