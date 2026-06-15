@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Management</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:250px;
+height:100vh;
+background:#0f172a;
+color:white;
+position:fixed;
+left:0;
+top:0;
+padding:20px;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:30px;
+}
+
+.sidebar a{
+display:block;
+color:white;
+text-decoration:none;
+padding:12px;
+border-radius:8px;
+margin-bottom:8px;
+transition:.3s;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+padding-left:18px;
+}
+
+/* MAIN */
+.main{
+margin-left:250px;
+width:100%;
+padding:20px;
+}
+
+/* CARDS */
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.card h3{
+color:#64748b;
+}
+
+.card h1{
+margin-top:10px;
+color:#0f172a;
+}
+
+/* FORM */
+.form{
+background:white;
+padding:20px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+}
+
+input{
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+width:100%;
+}
+
+button{
+background:#22c55e;
+color:white;
+border:none;
+padding:10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* TABLE */
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+text-align:left;
+}
+
+th{
+background:#e2e8f0;
+}
+
+.paid{
+color:green;
+font-weight:bold;
+}
+
+.pending{
+color:red;
+font-weight:bold;
+}
+
+.delete{
+background:red;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<h2>💰 Finance</h2>
+
+<a href="dashboard.html"><i class="fa fa-home"></i> Dashboard</a>
+<a href="students.html"><i class="fa fa-user-graduate"></i> Students</a>
+<a href="parents.html"><i class="fa fa-users"></i> Parents</a>
+<a href="attendance.html"><i class="fa fa-check"></i> Attendance</a>
+<a href="results.html"><i class="fa fa-chart-line"></i> Results</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- CARDS -->
+<div class="cards">
+
+<div class="card">
+<h3>Total Fees</h3>
+<h1 id="totalFees">0 Frw</h1>
+</div>
+
+<div class="card">
+<h3>Paid</h3>
+<h1 id="paidFees">0 Frw</h1>
+</div>
+
+<div class="card">
+<h3>Balance</h3>
+<h1 id="balance">0 Frw</h1>
+</div>
+
+</div>
+
+<!-- FORM -->
+<div class="form">
+
+<h2>Add Payment</h2>
+<br>
+
+<div class="form-grid">
+
+<input type="text" id="studentName" placeholder="Student Name">
+<input type="number" id="amount" placeholder="Amount Paid">
+<input type="date" id="date">
+
+<button onclick="addPayment()">Save Payment</button>
+
+</div>
+
+</div>
+
+<!-- TABLE -->
+<table>
+
+<thead>
+<tr>
+<th>Student</th>
+<th>Amount</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="financeTable"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let payments = JSON.parse(localStorage.getItem("payments")) || [];
+
+const TOTAL_FEES = 500000; // per student reference
+
+function save(){
+localStorage.setItem("payments", JSON.stringify(payments));
+}
+
+function addPayment(){
+
+let name = document.getElementById("studentName").value;
+let amount = parseInt(document.getElementById("amount").value);
+let date = document.getElementById("date").value;
+
+if(!name || !amount || !date){
+alert("Fill all fields");
+return;
+}
+
+payments.push({name, amount, date});
+save();
+render();
+
+document.getElementById("studentName").value="";
+document.getElementById("amount").value="";
+document.getElementById("date").value="";
+
+}
+
+function deletePayment(index){
+payments.splice(index,1);
+save();
+render();
+}
+
+function render(){
+
+let table = document.getElementById("financeTable");
+table.innerHTML="";
+
+let totalPaid = 0;
+
+payments.forEach((p,index)=>{
+
+totalPaid += p.amount;
+
+table.innerHTML += `
+<tr>
+<td>${p.name}</td>
+<td>${p.amount} Frw</td>
+<td>${p.date}</td>
+<td class="${p.amount >= TOTAL_FEES ? 'paid':'pending'}">
+${p.amount >= TOTAL_FEES ? 'PAID':'PENDING'}
+</td>
+<td>
+<button class="delete" onclick="deletePayment(${index})">Delete</button>
+</td>
+</tr>
+`;
+
+});
+
+document.getElementById("totalFees").innerText = TOTAL_FEES + " Frw";
+document.getElementById("paidFees").innerText = totalPaid + " Frw";
+document.getElementById("balance").innerText = (TOTAL_FEES - totalPaid) + " Frw";
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
