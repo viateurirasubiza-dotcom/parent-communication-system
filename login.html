@@ -1,170 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Parent Communication System</title>
+<script type="module">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+import { auth, db } from "./firebase.js";
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
+import {
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-body{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
-}
+import {
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-.login-container{
-width:400px;
-background:white;
-padding:35px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.3);
-}
-
-.logo{
-text-align:center;
-font-size:50px;
-margin-bottom:10px;
-}
-
-h2{
-text-align:center;
-color:#0f172a;
-margin-bottom:25px;
-}
-
-.input-group{
-margin-bottom:15px;
-}
-
-label{
-display:block;
-margin-bottom:5px;
-font-weight:500;
-color:#333;
-}
-
-input,select{
-width:100%;
-padding:12px;
-border:1px solid #ccc;
-border-radius:10px;
-font-size:15px;
-outline:none;
-}
-
-input:focus,
-select:focus{
-border-color:#22c55e;
-}
-
-.btn{
-width:100%;
-padding:13px;
-border:none;
-border-radius:10px;
-background:#22c55e;
-color:white;
-font-size:16px;
-font-weight:600;
-cursor:pointer;
-margin-top:10px;
-transition:.3s;
-}
-
-.btn:hover{
-background:#16a34a;
-}
-
-.links{
-margin-top:15px;
-text-align:center;
-}
-
-.links a{
-text-decoration:none;
-color:#2563eb;
-font-size:14px;
-}
-
-.error{
-color:red;
-text-align:center;
-margin-top:10px;
-font-size:14px;
-}
-
-.footer{
-text-align:center;
-margin-top:20px;
-font-size:12px;
-color:#777;
-}
-</style>
-</head>
-
-<body>
-
-<div class="login-container">
-
-<div class="logo">🎓</div>
-
-<h2>System Login</h2>
-
-<form id="loginForm">
-
-<div class="input-group">
-<label>Select Role</label>
-<select id="role" required>
-<option value="">Choose Role</option>
-<option value="admin">Admin</option>
-<option value="teacher">Teacher</option>
-<option value="parent">Parent</option>
-<option value="student">Student</option>
-</select>
-</div>
-
-<div class="input-group">
-<label>Email</label>
-<input type="email" id="email" placeholder="Enter Email" required>
-</div>
-
-<div class="input-group">
-<label>Password</label>
-<input type="password" id="password" placeholder="Enter Password" required>
-</div>
-
-<button type="submit" class="btn">
-Login
-</button>
-
-<div class="error" id="error"></div>
-
-</form>
-
-<div class="links">
-<a href="#">Forgot Password?</a>
-</div>
-
-<div class="footer">
-© 2026 Parent Communication System
-</div>
-
-</div>
-
-<script>
 document.getElementById("loginForm")
-.addEventListener("submit", function(e){
+.addEventListener("submit", async function(e){
 
 e.preventDefault();
 
@@ -177,18 +25,87 @@ document.getElementById("email").value;
 const password =
 document.getElementById("password").value;
 
-if(role==="" || email==="" || password===""){
-document.getElementById("error").innerText =
-"Please fill all fields";
+const error =
+document.getElementById("error");
+
+error.innerText = "";
+
+try{
+
+const userCredential =
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid = userCredential.user.uid;
+
+const userRef = doc(db,"users",uid);
+
+const userSnap = await getDoc(userRef);
+
+if(!userSnap.exists()){
+
+error.innerText = "User profile not found";
 return;
+
 }
 
-localStorage.setItem("role",role);
+const userData = userSnap.data();
 
+if(userData.status !== "approved"){
+
+error.innerText =
+"Your account is waiting for Admin approval.";
+
+return;
+
+}
+
+if(userData.role !== role){
+
+error.innerText =
+"Selected role does not match your account.";
+
+return;
+
+}
+
+localStorage.setItem(
+"currentUser",
+JSON.stringify(userData)
+);
+
+switch(userData.role){
+
+case "admin":
+window.location.href="admin-dashboard.html";
+break;
+
+case "teacher":
+window.location.href="teacher-dashboard.html";
+break;
+
+case "parent":
+window.location.href="parent-dashboard.html";
+break;
+
+case "student":
+window.location.href="student-dashboard.html";
+break;
+
+default:
 window.location.href="dashboard.html";
 
-});
-</script>
+}
 
-</body>
-</html>
+}catch(err){
+
+error.innerText = err.message;
+
+}
+
+});
+
+</script>
